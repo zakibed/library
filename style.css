@@ -54,3 +54,95 @@ hr {
     display: flex;
     gap: 40px;
 }
+
+.book-container {
+    width: 300px;
+    padding: 50px 0;
+}
+
+.book-cover,
+.book-info {
+    width: 100%;
+}
+
+.book-cover {
+    height: 420px;
+    font-family: 'Times New Roman', Times, serif;
+    background: gray;
+    border-radius: 18px 0 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.book-cover:before {
+    content: '';
+    width: 96.5%;
+    height: 20px;
+    background: white;
+    position: absolute;
+    top: 10px;
+    right: 5px;
+    border-radius: 10px 0 0 10px;
+}
+
+.book-cover:after {
+    content: '';
+    width: 8px;
+    height: 97.5%;
+    background: white;
+    position: absolute;
+    top: 10px;
+    right: 4px;
+}
+
+.book-info {
+    padding: 10px 0;
+    color: gray;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.book-info i {
+    font-size: 1.3rem;
+}
+
+.book-info:after {
+    content: '';
+    width: 13px;
+    height: 10px;
+    background: black;
+    position: absolute;
+    bottom: 39px;
+    right: -1px;
+    border-radius: 8px 0 0 0;
+}
+
+[data-book-property] {
+    font-size: 20px;
+}
+
+[data-book-property='title'] {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+[data-book-property='pages'] {
+    font-size: 1.1rem;
+    position: absolute;
+    right: 0;
+}
+
+[data-book-property='pages']:after {
+    content: 'Pages';
+    margin-left: 5px;
+}
+
+[data-book-property='status'] {
+    font-size: 1.1rem;
+    position: absolute;
+    left: 27px;
+}
