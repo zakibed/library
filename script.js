@@ -5,11 +5,32 @@ const bookForm = document.querySelector('#book-form');
 const addBookBtn = document.querySelector('#add-book-btn');
 const submitFormBtn = document.querySelector('#form-submit-btn');
 
-function showStatus(icon, prop) {
-    if (prop === 'Not read') icon.className = 'fa-solid fa-circle-exclamation';
-    if (prop === 'Reading...') icon.className = 'fa-solid fa-spinner';
-    if (prop === 'Finished') icon.className = 'fa-solid fa-circle-check';
-}
+const FotR = new Book(
+    'The Fellowship of the Ring',
+    'J.R.R. Tolkien',
+    423,
+    'Finished'
+);
+
+const theTwoTowers = new Book(
+    'The Two Towers',
+    'J.R.R. Tolkien',
+    352,
+    'Reading...'
+);
+
+const theReturnOfTheKing = new Book(
+    'The Return of the King',
+    'J.R.R. Tolkien',
+    416,
+    'Not read'
+);
+
+myLibrary.push(FotR);
+myLibrary.push(theTwoTowers);
+myLibrary.push(theReturnOfTheKing);
+
+displayBooks();
 
 function Book(title, author, pages, status) {
     this.title = title;
@@ -18,19 +39,46 @@ function Book(title, author, pages, status) {
     this.status = status;
 }
 
-function addBookToLibrary() {}
-
-function displayBookForm() {
-    bookForm.style.display = 'block';
-    document.querySelector('header').style.filter = 'blur(10px)';
-    document.querySelector('hr').style.filter = 'blur(10px)';
-    document.querySelector('#books-header').style.filter = 'blur(10px)';
-    libraryEl.style.filter = 'blur(10px)';
-
-    addBookBtn.disabled = true;
+function showStatus(icon, prop) {
+    if (prop === 'Not read') icon.className = 'fa-solid fa-circle-exclamation';
+    if (prop === 'Reading...') icon.className = 'fa-solid fa-spinner';
+    if (prop === 'Finished') icon.className = 'fa-solid fa-circle-check';
 }
 
-function displayBook() {
+function toggleForm(visibility, blur, disabled) {
+    bookForm.style.display = visibility;
+    document.querySelector('header').style.filter = blur;
+    document.querySelector('hr').style.filter = blur;
+    document.querySelector('#books-header').style.filter = blur;
+    libraryEl.style.filter = blur;
+
+    addBookBtn.disabled = disabled;
+}
+
+function addBookToLibrary(event) {
+    const title = document.querySelector('#title').value;
+    const author = document.querySelector('#author').value;
+    const pages = document.querySelector('#pages').value;
+    const status = document.querySelector('#status').value;
+
+    const newBook = new Book(title, author, pages, status);
+    myLibrary.push(newBook);
+
+    toggleForm('none', 'blur(0px)', false);
+    bookForm.reset();
+
+    displayBooks();
+
+    console.log(myLibrary);
+
+    event.preventDefault();
+}
+
+function displayBooks() {
+    document
+        .querySelectorAll('#library-container *')
+        .forEach((book) => book.remove());
+
     for (let i in myLibrary) {
         const bookContainer = document.createElement('div');
 
@@ -66,17 +114,5 @@ function displayBook() {
     }
 }
 
-const theHobbit = new Book(
-    'The Lord of the Rings',
-    'J.R.R. Tolkien',
-    1178,
-    'Finished'
-);
-myLibrary.push(theHobbit);
-
-const mobyDick = new Book('Moby Dick', 'Herman Melville', 427, 'Reading...');
-myLibrary.push(mobyDick);
-
-addBookBtn.addEventListener('click', displayBookForm);
-
-displayBook();
+addBookBtn.addEventListener('click', toggleForm('block', 'blur(3px)', true));
+bookForm.addEventListener('submit', addBookToLibrary);
