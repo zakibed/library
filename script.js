@@ -1,11 +1,14 @@
 let myLibrary = [];
 
 const libraryEl = document.querySelector('#library-container');
+const bookForm = document.querySelector('#book-form');
+const addBookBtn = document.querySelector('#add-book-btn');
+const submitFormBtn = document.querySelector('#form-submit-btn');
 
 function showStatus(icon, prop) {
-    if (prop === 'Not read') icon.className = 'fa-solid fa-spinner';
-    if (prop === 'Reading') icon.className = 'fa-solid fa-exclamation';
-    if (prop === 'Finished') icon.className = 'fa-solid fa-check';
+    if (prop === 'Not read') icon.className = 'fa-solid fa-circle-exclamation';
+    if (prop === 'Reading...') icon.className = 'fa-solid fa-spinner';
+    if (prop === 'Finished') icon.className = 'fa-solid fa-circle-check';
 }
 
 function Book(title, author, pages, status) {
@@ -15,16 +18,24 @@ function Book(title, author, pages, status) {
     this.status = status;
 }
 
-function addBook() {}
+function addBookToLibrary() {}
 
-function showBook() {
+function displayBookForm() {
+    bookForm.style.display = 'block';
+    document.querySelector('header').style.filter = 'blur(10px)';
+    document.querySelector('hr').style.filter = 'blur(10px)';
+    document.querySelector('#books-header').style.filter = 'blur(10px)';
+    libraryEl.style.filter = 'blur(10px)';
+
+    addBookBtn.disabled = true;
+}
+
+function displayBook() {
     for (let i in myLibrary) {
         const bookContainer = document.createElement('div');
 
         bookContainer.className = 'book-container';
-
         bookContainer.dataset.bookIndex = i;
-
         libraryEl.appendChild(bookContainer);
 
         const bookCover = document.createElement('div');
@@ -63,7 +74,9 @@ const theHobbit = new Book(
 );
 myLibrary.push(theHobbit);
 
-const mobyDick = new Book('Moby Dick', 'Herman Melville', 427, 'Not read');
+const mobyDick = new Book('Moby Dick', 'Herman Melville', 427, 'Reading...');
 myLibrary.push(mobyDick);
 
-showBook();
+addBookBtn.addEventListener('click', displayBookForm);
+
+displayBook();

@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
+        <title>Library</title>
         <link rel="stylesheet" href="style.css" />
         <script src="script.js" defer></script>
         <script
@@ -21,9 +21,42 @@
         <div id="books-header">
             <i class="fa-solid fa-book"></i>
             <h2>Books</h2>
-            <i class="fa-solid fa-plus"></i>
+            <button id="add-book-btn"><i class="fa-solid fa-plus"></i></button>
         </div>
 
         <div id="library-container"></div>
+
+        <form action="get" method="post" id="book-form">
+            <div class="form-row">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" required />
+            </div>
+
+            <div class="form-row">
+                <label for="author">Author</label>
+                <input type="text" id="author" name="author" required />
+            </div>
+
+            <div class="form-row">
+                <label for="pages">Number of pages</label>
+                <input
+                    type="number"
+                    id="pages"
+                    name="pages"
+                    min="10"
+                    max="3000"
+                    required
+                />
+            </div>
+
+            <label for="status">Book status</label>
+            <select name="status" id="status">
+                <option value="not read">Not read</option>
+                <option value="reading">Reading...</option>
+                <option value="finished">Finished</option>
+            </select>
+
+            <button type="submit" id="form-submit-btn">Add Book</button>
+        </form>
     </body>
 </html>
