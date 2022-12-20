@@ -5,25 +5,30 @@ const bookForm = document.querySelector('#book-form');
 const addBookBtn = document.querySelector('#add-book-btn');
 const submitFormBtn = document.querySelector('#form-submit-btn');
 
+// dummy content
 const FotR = new Book(
     'The Fellowship of the Ring',
     'J.R.R. Tolkien',
     423,
-    'Finished'
+    'Finished',
+    'brown',
+    'gold'
 );
-
 const theTwoTowers = new Book(
     'The Two Towers',
     'J.R.R. Tolkien',
     352,
-    'Reading...'
+    'Reading...',
+    'darkolivegreen',
+    'gold'
 );
-
 const theReturnOfTheKing = new Book(
     'The Return of the King',
     'J.R.R. Tolkien',
     416,
-    'Not read'
+    'Not read',
+    'mediumvioletred',
+    'gold'
 );
 
 myLibrary.push(FotR);
@@ -32,11 +37,13 @@ myLibrary.push(theReturnOfTheKing);
 
 displayBooks();
 
-function Book(title, author, pages, status) {
+function Book(title, author, pages, status, coverColor, textColor) {
     this.title = title;
     this.author = author;
     this.pages = pages;
     this.status = status;
+    this.coverColor = coverColor;
+    this.textColor = textColor;
 }
 
 function showStatus(icon, prop) {
@@ -47,10 +54,10 @@ function showStatus(icon, prop) {
 
 function toggleForm(visibility, blur, disabled) {
     bookForm.style.display = visibility;
-    document.querySelector('header').style.filter = blur;
-    document.querySelector('hr').style.filter = blur;
-    document.querySelector('#books-header').style.filter = blur;
-    libraryEl.style.filter = blur;
+
+    document
+        .querySelectorAll('body *:not(#book-form, #book-form *)')
+        .forEach((n) => (n.style.filter = blur));
 
     addBookBtn.disabled = disabled;
 }
@@ -61,7 +68,11 @@ function addBookToLibrary(event) {
     const pages = document.querySelector('#pages').value;
     const status = document.querySelector('#status').value;
 
-    const newBook = new Book(title, author, pages, status);
+    const coverColor = document.querySelector('#cover-color').value;
+    const textColor = document.querySelector('#text-color').value;
+
+    const newBook = new Book(title, author, pages, status, coverColor, textColor);
+
     myLibrary.push(newBook);
 
     toggleForm('none', 'blur(0px)', false);
@@ -75,9 +86,7 @@ function addBookToLibrary(event) {
 }
 
 function displayBooks() {
-    document
-        .querySelectorAll('#library-container *')
-        .forEach((book) => book.remove());
+    document.querySelectorAll('#library-container *').forEach((book) => book.remove());
 
     for (let i in myLibrary) {
         const bookContainer = document.createElement('div');
@@ -105,14 +114,22 @@ function displayBooks() {
             info.dataset.bookProperty = prop;
             info.textContent = myLibrary[i][prop];
 
-            prop === 'title' || prop === 'author'
-                ? bookCover.appendChild(info)
-                : bookInfo.appendChild(info);
+            if (prop === 'title' || prop === 'author') {
+                bookCover.appendChild(info);
+            } else if (prop === 'pages' || prop === 'status') {
+                bookInfo.appendChild(info);
+            } else if (prop === 'coverColor') {
+                document.querySelector(`[data-book-index='${i}'] .book-cover`).style.background =
+                    myLibrary[i][prop];
+            } else {
+                document.querySelector(`[data-book-index='${i}'] .book-cover`).style.color =
+                    myLibrary[i][prop];
+            }
 
             showStatus(icon, myLibrary[i][prop]);
         }
     }
 }
 
-addBookBtn.addEventListener('click', toggleForm('block', 'blur(3px)', true));
+addBookBtn.addEventListener('click', () => toggleForm('block', 'blur(3px)', true));
 bookForm.addEventListener('submit', addBookToLibrary);
