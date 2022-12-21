@@ -18,7 +18,7 @@ const theTwoTowers = new Book(
     'The Two Towers',
     'J.R.R. Tolkien',
     352,
-    'Reading...',
+    'Reading',
     'darkolivegreen',
     'gold'
 );
@@ -40,15 +40,20 @@ displayBooks();
 function Book(title, author, pages, status, coverColor, textColor) {
     this.title = title;
     this.author = author;
-    this.pages = pages;
     this.status = status;
+    this.pages = pages;
     this.coverColor = coverColor;
     this.textColor = textColor;
 }
 
+function appendElement(element, parent, className) {
+    element.className = className;
+    parent.appendChild(element);
+}
+
 function showStatus(icon, prop) {
     if (prop === 'Not read') icon.className = 'fa-solid fa-circle-exclamation';
-    if (prop === 'Reading...') icon.className = 'fa-solid fa-spinner';
+    if (prop === 'Reading') icon.className = 'fa-solid fa-spinner';
     if (prop === 'Finished') icon.className = 'fa-solid fa-circle-check';
 }
 
@@ -59,7 +64,9 @@ function toggleForm(visibility, blur, disabled) {
         .querySelectorAll('body *:not(#book-form, #book-form *)')
         .forEach((n) => (n.style.filter = blur));
 
-    addBookBtn.disabled = disabled;
+    document
+        .querySelectorAll('button:not(#form-submit-btn)')
+        .forEach((btn) => (btn.disabled = disabled));
 }
 
 function addBookToLibrary(event) {
@@ -90,23 +97,21 @@ function displayBooks() {
 
     for (let i in myLibrary) {
         const bookContainer = document.createElement('div');
-
-        bookContainer.className = 'book-container';
-        bookContainer.dataset.bookIndex = i;
-        libraryEl.appendChild(bookContainer);
-
         const bookCover = document.createElement('div');
-
-        bookCover.className = 'book-cover';
-        bookContainer.appendChild(bookCover);
-
         const bookInfo = document.createElement('div');
 
-        bookInfo.className = 'book-info';
-        bookContainer.appendChild(bookInfo);
+        appendElement(bookContainer, libraryEl, 'book-container');
+        appendElement(bookCover, bookContainer, 'book-cover');
+        appendElement(bookInfo, bookContainer, 'book-info');
 
-        const icon = document.createElement('i');
-        bookInfo.appendChild(icon);
+        bookContainer.dataset.bookIndex = i;
+
+        const statusIcon = document.createElement('i');
+        bookInfo.appendChild(statusIcon);
+
+        const bookSettings = document.createElement('button');
+        bookInfo.appendChild(bookSettings);
+        appendElement(document.createElement('i'), bookSettings, 'fa-solid fa-list');
 
         for (prop in myLibrary[i]) {
             const info = document.createElement('p');
@@ -114,19 +119,17 @@ function displayBooks() {
             info.dataset.bookProperty = prop;
             info.textContent = myLibrary[i][prop];
 
-            if (prop === 'title' || prop === 'author') {
-                bookCover.appendChild(info);
-            } else if (prop === 'pages' || prop === 'status') {
-                bookInfo.appendChild(info);
-            } else if (prop === 'coverColor') {
+            if (prop === 'title' || prop === 'author') bookCover.appendChild(info);
+            if (prop === 'pages' || prop === 'status') bookInfo.appendChild(info);
+
+            if (prop === 'coverColor')
                 document.querySelector(`[data-book-index='${i}'] .book-cover`).style.background =
                     myLibrary[i][prop];
-            } else {
+            if (prop === 'textColor')
                 document.querySelector(`[data-book-index='${i}'] .book-cover`).style.color =
                     myLibrary[i][prop];
-            }
 
-            showStatus(icon, myLibrary[i][prop]);
+            showStatus(statusIcon, myLibrary[i][prop]);
         }
     }
 }
