@@ -35,6 +35,10 @@ button {
     border: none;
 }
 
+button:enabled:hover {
+    cursor: pointer;
+}
+
 #books-header {
     margin: 30px 2.5% 0;
     display: flex;
@@ -48,9 +52,9 @@ button {
     right: 0;
 }
 
-#add-book-btn:enabled:hover {
+#add-book-btn:enabled:hover,
+[data-book-property='status']:enabled:hover {
     color: white;
-    cursor: pointer;
 }
 
 #library-container {
@@ -140,6 +144,12 @@ button {
 [data-book-property='pages'] {
     font-size: 1rem;
 }
+
+[data-book-property='pages']::before {
+    content: '|';
+    margin: 0 3px;
+}
+
 [data-book-property='pages']::after {
     content: 'Pages';
     margin-left: 4px;
@@ -148,11 +158,11 @@ button {
 [data-book-property='status'] {
     margin-left: 5px;
     font-size: 1rem;
-}
-
-[data-book-property='status']::after {
-    content: '|';
-    margin: 0 3px;
+    color: gray;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 5px;
 }
 
 [class^='delete-btn'] {
@@ -162,8 +172,7 @@ button {
 }
 
 [class^='delete-btn']:enabled:hover {
-    color: #fb2424;
-    cursor: pointer;
+    color: #fc1a1a;
 }
 
 #book-form {
