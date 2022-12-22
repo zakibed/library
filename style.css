@@ -35,12 +35,6 @@ button {
     border: none;
 }
 
-#add-book-btn:enabled:hover,
-.book-info button:enabled:hover {
-    color: white;
-    cursor: pointer;
-}
-
 #books-header {
     margin: 30px 2.5% 0;
     display: flex;
@@ -52,6 +46,11 @@ button {
     color: #535353;
     position: absolute;
     right: 0;
+}
+
+#add-book-btn:enabled:hover {
+    color: white;
+    cursor: pointer;
 }
 
 #library-container {
@@ -71,8 +70,10 @@ button {
 }
 
 .book-cover {
+    padding: 15px 18px 0 10px;
     height: 420px;
     font-family: 'Times New Roman', Times, serif;
+    text-align: center;
     background: gray;
     border-radius: 18px 0 0 0;
     display: flex;
@@ -82,7 +83,7 @@ button {
     position: relative;
 }
 
-.book-cover:before {
+.book-cover::before {
     content: '';
     width: 96.5%;
     height: 20px;
@@ -93,7 +94,7 @@ button {
     border-radius: 10px 0 0 10px;
 }
 
-.book-cover:after {
+.book-cover::after {
     content: '';
     width: 8px;
     height: 97.5%;
@@ -111,18 +112,12 @@ button {
     position: relative;
 }
 
-.book-info button {
-    color: gray;
-    position: absolute;
-    right: 0;
-}
-
 .book-info i {
     margin: 0;
     font-size: 1.2rem;
 }
 
-.book-info:after {
+.book-info::after {
     content: '';
     width: 13px;
     height: 10px;
@@ -145,7 +140,7 @@ button {
 [data-book-property='pages'] {
     font-size: 1rem;
 }
-[data-book-property='pages']:after {
+[data-book-property='pages']::after {
     content: 'Pages';
     margin-left: 4px;
 }
@@ -158,6 +153,17 @@ button {
 [data-book-property='status']::after {
     content: '|';
     margin: 0 3px;
+}
+
+[class^='delete-btn'] {
+    color: gray;
+    position: absolute;
+    right: 0;
+}
+
+[class^='delete-btn']:enabled:hover {
+    color: #fb2424;
+    cursor: pointer;
 }
 
 #book-form {
@@ -241,4 +247,8 @@ input[type='color'] {
 #form-submit-btn:hover {
     color: black;
     background: white;
+}
+
+#dummy-book {
+    display: none;
 }

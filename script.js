@@ -5,7 +5,6 @@ const bookForm = document.querySelector('#book-form');
 const addBookBtn = document.querySelector('#add-book-btn');
 const submitFormBtn = document.querySelector('#form-submit-btn');
 
-// dummy content
 const FotR = new Book(
     'The Fellowship of the Ring',
     'J.R.R. Tolkien',
@@ -56,6 +55,11 @@ function showStatus(icon, prop) {
     if (prop === 'Reading') icon.className = 'fa-solid fa-spinner';
     if (prop === 'Finished') icon.className = 'fa-solid fa-circle-check';
 }
+
+// function deleteBook() {
+//     document.querySelector(`data-book-index-${this.className[this.className.length - 1]}`).remove();
+//     console.log(this.className);
+// }
 
 function toggleForm(visibility, blur, disabled) {
     bookForm.style.display = visibility;
@@ -109,9 +113,13 @@ function displayBooks() {
         const statusIcon = document.createElement('i');
         bookInfo.appendChild(statusIcon);
 
-        const bookSettings = document.createElement('button');
-        bookInfo.appendChild(bookSettings);
-        appendElement(document.createElement('i'), bookSettings, 'fa-solid fa-list');
+        // const bookSettings = document.createElement('button');
+        // appendElement(bookSettings, bookInfo, `settings-btn-${i}`);
+        // appendElement(document.createElement('i'), bookSettings, 'fa-solid fa-list');
+
+        const deleteBtn = document.createElement('button');
+        appendElement(deleteBtn, bookInfo, `delete-btn-${i}`);
+        appendElement(document.createElement('i'), deleteBtn, 'fa-solid fa-trash');
 
         for (prop in myLibrary[i]) {
             const info = document.createElement('p');
@@ -119,20 +127,32 @@ function displayBooks() {
             info.dataset.bookProperty = prop;
             info.textContent = myLibrary[i][prop];
 
-            if (prop === 'title' || prop === 'author') bookCover.appendChild(info);
-            if (prop === 'pages' || prop === 'status') bookInfo.appendChild(info);
+            if (prop === 'status') {
+                bookInfo.appendChild(info);
+            } else if (prop === 'pages') {
+                bookInfo.appendChild(info);
 
-            if (prop === 'coverColor')
+                const settings = document.createElement('div');
+                appendElement(settings, bookInfo, 'settings');
+            } else if (prop === 'coverColor') {
                 document.querySelector(`[data-book-index='${i}'] .book-cover`).style.background =
                     myLibrary[i][prop];
-            if (prop === 'textColor')
+            } else if (prop === 'textColor') {
                 document.querySelector(`[data-book-index='${i}'] .book-cover`).style.color =
                     myLibrary[i][prop];
+            } else {
+                bookCover.appendChild(info);
+            }
 
             showStatus(statusIcon, myLibrary[i][prop]);
         }
+
+        document.querySelector(`.delete-btn-${i}`).addEventListener('click', function () {
+            document.querySelector(`[data-book-index='${i}']`).remove();
+            myLibrary.splice(i, 1);
+        });
     }
 }
 
-addBookBtn.addEventListener('click', () => toggleForm('block', 'blur(3px)', true));
+addBookBtn.addEventListener('click', () => toggleForm('block', 'blur(2px)', true));
 bookForm.addEventListener('submit', addBookToLibrary);
