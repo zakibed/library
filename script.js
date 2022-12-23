@@ -77,6 +77,8 @@ function toggleForm(visibility, blur, disabled) {
     document
         .querySelectorAll('button:not(#form-submit-btn)')
         .forEach((btn) => (btn.disabled = disabled));
+
+    bookForm.reset();
 }
 
 function addBookToLibrary(event) {
@@ -93,7 +95,6 @@ function addBookToLibrary(event) {
     myLibrary.push(newBook);
 
     toggleForm('none', 'blur(0px)', false);
-    bookForm.reset();
 
     displayBooks();
 
@@ -164,3 +165,6 @@ function displayBooks() {
 
 addBookBtn.addEventListener('click', () => toggleForm('block', 'blur(2px)', true));
 bookForm.addEventListener('submit', addBookToLibrary);
+document
+    .querySelector('#book-form > i')
+    .addEventListener('click', () => toggleForm('none', 'blur(0px)', false));

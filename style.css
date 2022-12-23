@@ -167,7 +167,8 @@ button:enabled:hover {
     right: 0;
 }
 
-[class^='delete-btn']:enabled:hover {
+[class^='delete-btn']:enabled:hover,
+#book-form > i:hover {
     color: #fc1a1a;
 }
 
@@ -176,11 +177,19 @@ button:enabled:hover {
     background: black;
     border: 2px solid gray;
     border-radius: 20px;
+    display: none;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    display: none;
+}
+
+#book-form > i {
+    color: gray;
+    position: absolute;
+    top: 17px;
+    right: 8px;
+    cursor: pointer;
 }
 
 .form-row {
@@ -210,6 +219,11 @@ input {
     font-size: 1.2rem;
 }
 
+input:focus,
+select:focus {
+    outline: 2px solid #5a5af8;
+}
+
 select,
 #form-submit-btn {
     width: 100%;
@@ -221,6 +235,8 @@ select,
 select {
     margin: 5px 0 35px;
     font-size: 1.2rem;
+    color: black;
+    background: white;
 }
 
 .form-row:nth-last-of-type(2),
@@ -252,10 +268,6 @@ input[type='color'] {
 #form-submit-btn:hover {
     color: black;
     background: white;
-}
-
-#dummy-book {
-    display: none;
 }
 
 @media (max-width: 935px) {
