@@ -40,7 +40,7 @@ button:enabled:hover {
 }
 
 #books-header {
-    margin: 30px 2.5% 0;
+    margin: 30px 2.5%;
     display: flex;
     align-items: center;
     position: relative;
@@ -58,14 +58,10 @@ button:enabled:hover {
 }
 
 #library-container {
-    padding: 0 2.5%;
-    display: flex;
-    gap: 40px;
-}
-
-.book-container {
-    width: 300px;
-    padding: 50px 0;
+    margin: 0 2.5%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, min(300px, 30%));
+    gap: 4%;
 }
 
 .book-cover,
@@ -260,4 +256,16 @@ input[type='color'] {
 
 #dummy-book {
     display: none;
+}
+
+@media (max-width: 935px) {
+    #library-container {
+        justify-content: center;
+        grid-template-columns: repeat(auto-fit, 280px);
+        gap: 30px;
+    }
+
+    .book-cover {
+        height: 395px;
+    }
 }
