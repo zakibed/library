@@ -53,7 +53,7 @@ button:enabled:hover {
 }
 
 #add-book-btn:enabled:hover,
-[data-book-property='status']:enabled:hover {
+.status:enabled:hover {
     color: white;
 }
 
@@ -73,6 +73,7 @@ button:enabled:hover {
     padding: 15px 18px 0 10px;
     height: 420px;
     font-family: 'Times New Roman', Times, serif;
+    font-size: 1.25rem;
     text-align: center;
     background: gray;
     border-radius: 18px 0 0 0;
@@ -128,30 +129,26 @@ button:enabled:hover {
     border-radius: 35px 0 0 5px;
 }
 
-[data-book-property] {
-    font-size: 20px;
-}
-
-[data-book-property='title'] {
+.title {
     margin-bottom: 10px;
     font-weight: bold;
 }
 
-[data-book-property='pages'] {
+.pages {
     font-size: 1rem;
 }
 
-[data-book-property='pages']::before {
+.pages::before {
     content: '|';
     margin: 0 3px;
 }
 
-[data-book-property='pages']::after {
+.pages::after {
     content: 'Pages';
     margin-left: 4px;
 }
 
-[data-book-property='status'] {
+.status {
     margin-left: 5px;
     font-size: 1rem;
     color: gray;
@@ -161,13 +158,13 @@ button:enabled:hover {
     gap: 5px;
 }
 
-[class^='delete-btn'] {
+.delete-btn {
     color: gray;
     position: absolute;
     right: 0;
 }
 
-[class^='delete-btn']:enabled:hover,
+.delete-btn:enabled:hover,
 #book-form > i:hover {
     color: #fc1a1a;
 }

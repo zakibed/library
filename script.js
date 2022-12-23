@@ -114,47 +114,55 @@ function displayBooks() {
         appendElement(bookCover, bookContainer, 'book-cover');
         appendElement(bookInfo, bookContainer, 'book-info');
 
-        bookContainer.dataset.bookIndex = i;
+        bookContainer.dataset.index = i;
+        bookContainer.dataset.title = myLibrary[i].title;
 
         const deleteBtn = document.createElement('button');
-        appendElement(deleteBtn, bookInfo, `delete-btn-${i}`);
+        appendElement(deleteBtn, bookInfo, 'delete-btn');
         appendElement(document.createElement('i'), deleteBtn, 'fa-solid fa-trash');
 
         for (prop in myLibrary[i]) {
             const info = document.createElement('p');
-
-            info.dataset.bookProperty = prop;
             info.textContent = myLibrary[i][prop];
 
             if (prop === 'status') {
                 const statusBtn = document.createElement('button');
-                statusBtn.dataset.bookProperty = prop;
+                statusBtn.className = prop;
                 statusBtn.textContent = myLibrary[i][prop];
 
                 bookInfo.appendChild(statusBtn);
                 statusBtn.appendChild(statusIcon);
+            } else if (prop === 'title' || prop === 'author') {
+                appendElement(info, bookCover, prop);
+            } else if (prop === 'pages') {
+                appendElement(info, bookInfo, prop);
             } else if (prop === 'coverColor') {
-                document.querySelector(`[data-book-index='${i}'] .book-cover`).style.background =
+                document.querySelector(`[data-index='${i}'] .book-cover`).style.background =
                     myLibrary[i][prop];
             } else if (prop === 'textColor') {
-                document.querySelector(`[data-book-index='${i}'] .book-cover`).style.color =
+                document.querySelector(`[data-index='${i}'] .book-cover`).style.color =
                     myLibrary[i][prop];
-            } else if (prop === 'pages') {
-                bookInfo.appendChild(info);
-            } else if (prop === 'title' || prop === 'author') {
-                bookCover.appendChild(info);
             }
         }
 
         statusIcon.className = showStatus(myLibrary[i].status);
 
-        document.querySelector(`.delete-btn-${i}`).addEventListener('click', function () {
-            document.querySelector(`[data-book-index='${i}']`).remove();
-            myLibrary.splice(i, 1);
+        document.querySelectorAll('.delete-btn').forEach((btn) => {
+            btn.addEventListener('click', function () {
+                this.closest('.book-container').remove();
+                myLibrary.splice(i, 1);
+
+                document.querySelectorAll('.book-container').forEach((n) => {
+                    for (i in myLibrary) {
+                        if (myLibrary[i].title === n.dataset.title) n.dataset.index = i;
+                        console.log(i);
+                    }
+                });
+            });
         });
 
         document
-            .querySelector(`[data-book-index='${i}'] [data-book-property='status']`)
+            .querySelector(`[data-index='${i}'] .status`)
             .addEventListener('click', function () {
                 myLibrary[i].changeStatus();
                 this.textContent = myLibrary[i].status;
