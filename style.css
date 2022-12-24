@@ -16,11 +16,11 @@
 }
 
 :root.light {
-    --color-one: black;
-    --color-two: #626262;
-    --color-three: #c3c3c3;
-    --color-four: #8a8989;
-    --background: #cac9c9;
+    --color-one: #13120f;
+    --color-two: #534e44;
+    --color-three: #d4c4ab;
+    --color-four: #948a79;
+    --background: #f0ddc2;
 }
 
 body {
@@ -47,7 +47,6 @@ h2 {
 }
 
 i {
-    margin-right: 7px;
     font-size: 1.8rem;
 }
 
@@ -157,6 +156,7 @@ button:enabled:hover {
 .book-info i {
     margin: 0;
     font-size: 1.2rem;
+    transition: none;
 }
 
 .book-info::after {
@@ -198,6 +198,7 @@ button:enabled:hover {
     flex-direction: row-reverse;
     align-items: center;
     gap: 5px;
+    transition: none;
 }
 
 .delete-btn {
