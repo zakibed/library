@@ -1,40 +1,18 @@
-let myLibrary = [];
+let myLibrary = [
+    new Book('The Fellowship of the Ring', 'J.R.R. Tolkien', 423, 'Finished', 'brown', 'gold'),
+    new Book('The Two Towers', 'J.R.R. Tolkien', 352, 'Reading', 'darkolivegreen', 'gold'),
+    new Book('The Return of the King', 'J.R.R. Tolkien', 416, 'Not read', 'darkslateblue', 'gold')
+];
 
 const libraryEl = document.querySelector('#library-container');
 const bookForm = document.querySelector('#book-form');
 const addBookBtn = document.querySelector('#add-book-btn');
 const submitFormBtn = document.querySelector('#form-submit-btn');
+const removeFormBtn = document.querySelector('#book-form > i');
 
-const FotR = new Book(
-    'The Fellowship of the Ring',
-    'J.R.R. Tolkien',
-    423,
-    'Finished',
-    'brown',
-    'gold'
-);
-const theTwoTowers = new Book(
-    'The Two Towers',
-    'J.R.R. Tolkien',
-    352,
-    'Reading',
-    'darkolivegreen',
-    'gold'
-);
-const theReturnOfTheKing = new Book(
-    'The Return of the King',
-    'J.R.R. Tolkien',
-    416,
-    'Not read',
-    'mediumvioletred',
-    'gold'
-);
-
-myLibrary.push(FotR);
-myLibrary.push(theTwoTowers);
-myLibrary.push(theReturnOfTheKing);
-
-displayBooks();
+const root = document.querySelector(':root');
+const theme = document.querySelector(`input[type='checkbox']`);
+const themeBtn = document.querySelector('#theme i');
 
 function Book(title, author, pages, status, coverColor, textColor) {
     this.title = title;
@@ -82,10 +60,10 @@ function toggleForm(visibility, blur, disabled) {
 }
 
 function addBookToLibrary(event) {
-    const title = document.querySelector('#title').value;
-    const author = document.querySelector('#author').value;
-    const pages = document.querySelector('#pages').value;
-    const status = document.querySelector('#status').value;
+    const title = document.querySelector('#new-title').value;
+    const author = document.querySelector('#new-author').value;
+    const pages = document.querySelector('#new-pages').value;
+    const status = document.querySelector('#new-status').value;
 
     const coverColor = document.querySelector('#cover-color').value;
     const textColor = document.querySelector('#text-color').value;
@@ -171,8 +149,23 @@ function displayBooks() {
     }
 }
 
+displayBooks();
+root.className = 'dark';
+
 addBookBtn.addEventListener('click', () => toggleForm('block', 'blur(2px)', true));
+removeFormBtn.addEventListener('click', () => toggleForm('none', 'blur(0px)', false));
 bookForm.addEventListener('submit', addBookToLibrary);
-document
-    .querySelector('#book-form > i')
-    .addEventListener('click', () => toggleForm('none', 'blur(0px)', false));
+
+theme.addEventListener('change', () => (root.className = theme.checked ? 'dark' : 'light'));
+
+themeBtn.addEventListener('click', function () {
+    this.id = 'clicked';
+    setTimeout(() => {
+        this.className =
+            this.className === 'fa-solid fa-moon' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    }, 200);
+});
+
+themeBtn.addEventListener('transitionend', function () {
+    this.removeAttribute('id');
+});
