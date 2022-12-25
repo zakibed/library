@@ -37,7 +37,7 @@ function appendElement(element, parent, className) {
     parent.appendChild(element);
 }
 
-function showStatus(status) {
+function showBookStatus(status) {
     return status === 'Not read'
         ? 'fa-solid fa-circle-exclamation'
         : status === 'Reading'
@@ -86,18 +86,20 @@ function displayBooks() {
         const bookContainer = document.createElement('div');
         const bookCover = document.createElement('div');
         const bookInfo = document.createElement('div');
+        const deleteBookBtn = document.createElement('button');
         const statusIcon = document.createElement('i');
 
         appendElement(bookContainer, libraryEl, 'book-container');
         appendElement(bookCover, bookContainer, 'book-cover');
         appendElement(bookInfo, bookContainer, 'book-info');
 
+        appendElement(deleteBookBtn, bookInfo, 'delete-btn');
+        appendElement(document.createElement('i'), deleteBookBtn, 'fa-solid fa-trash');
+
         bookContainer.dataset.index = i;
         bookContainer.dataset.title = myLibrary[i].title;
 
-        const deleteBtn = document.createElement('button');
-        appendElement(deleteBtn, bookInfo, 'delete-btn');
-        appendElement(document.createElement('i'), deleteBtn, 'fa-solid fa-trash');
+        statusIcon.className = showBookStatus(myLibrary[i].status);
 
         for (prop in myLibrary[i]) {
             const info = document.createElement('p');
@@ -123,37 +125,37 @@ function displayBooks() {
             }
         }
 
-        statusIcon.className = showStatus(myLibrary[i].status);
-
-        document.querySelectorAll('.delete-btn').forEach((btn) => {
-            btn.addEventListener('click', function () {
-                this.closest('.book-container').remove();
-                myLibrary.splice(i, 1);
-
-                document.querySelectorAll('.book-container').forEach((n) => {
-                    for (i in myLibrary) {
-                        if (myLibrary[i].title === n.dataset.title) n.dataset.index = i;
-                        console.log(i);
-                    }
-                });
+        function removeBook() {
+            this.closest('.book-container').remove();
+            myLibrary.splice(i, 1);
+            document.querySelectorAll('.book-container').forEach((n) => {
+                for (i in myLibrary) {
+                    if (myLibrary[i].title === n.dataset.title) n.dataset.index = i;
+                }
             });
-        });
+        }
+
+        function displayNewStatus() {
+            myLibrary[i].changeStatus();
+            this.textContent = myLibrary[i].status;
+            appendElement(document.createElement('i'), this, showBookStatus(myLibrary[i].status));
+        }
+
+        document
+            .querySelectorAll('.delete-btn')
+            .forEach((btn) => btn.addEventListener('click', removeBook));
 
         document
             .querySelector(`[data-index='${i}'] .status`)
-            .addEventListener('click', function () {
-                myLibrary[i].changeStatus();
-                this.textContent = myLibrary[i].status;
-                appendElement(document.createElement('i'), this, showStatus(myLibrary[i].status));
-            });
+            .addEventListener('click', displayNewStatus);
     }
 }
 
 displayBooks();
 root.className = 'dark';
 
-addBookBtn.addEventListener('click', () => toggleForm('block', 'blur(2px)', true));
-removeFormBtn.addEventListener('click', () => toggleForm('none', 'blur(0px)', false));
+addBookBtn.addEventListener('click', toggleForm.bind(null, 'block', 'blur(2px)', true));
+removeFormBtn.addEventListener('click', toggleForm.bind(null, 'none', 'blur(0px)', false));
 bookForm.addEventListener('submit', addBookToLibrary);
 
 theme.addEventListener('change', () => (root.className = theme.checked ? 'dark' : 'light'));

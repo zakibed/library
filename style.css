@@ -198,8 +198,11 @@ button:enabled:hover {
     display: flex;
     flex-direction: row-reverse;
     align-items: center;
-    gap: 5px;
     transition: none;
+}
+
+.status i {
+    margin-right: 5px;
 }
 
 .delete-btn {
@@ -239,17 +242,28 @@ button:enabled:hover {
     flex-direction: column;
 }
 
-label,
+.form-row:nth-last-of-type(2),
+.form-row:last-of-type {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.form-row:nth-last-of-type(2) {
+    margin-bottom: 7px;
+}
+
+.form-row label,
 #form-submit-btn {
     font-size: 1.3rem;
 }
 
-label {
+.form-row label {
     color: var(--color-one);
 }
 
-.form-row input,
 select,
+.form-row input,
 #form-submit-btn {
     background: transparent;
     border: 2px solid gray;
@@ -264,8 +278,8 @@ select,
     font-size: 1.2rem;
 }
 
-.form-row input:focus,
-select:focus {
+select:focus,
+.form-row input:focus {
     outline: 2px solid #5a5af8;
 }
 
@@ -281,17 +295,6 @@ select {
     font-size: 1.2rem;
     color: black;
     background: white;
-}
-
-.form-row:nth-last-of-type(2),
-.form-row:last-of-type {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.form-row:nth-last-of-type(2) {
-    margin-bottom: 7px;
 }
 
 input[type='color'] {
