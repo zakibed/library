@@ -101,7 +101,7 @@ function displayBooks() {
 
         statusIcon.className = showBookStatus(myLibrary[i].status);
 
-        for (prop in myLibrary[i]) {
+        for (let prop in myLibrary[i]) {
             const info = document.createElement('p');
             info.textContent = myLibrary[i][prop];
 
