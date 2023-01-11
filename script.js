@@ -14,6 +14,29 @@ const root = document.querySelector(':root');
 const theme = document.querySelector(`input[type='checkbox']`);
 const themeBtn = document.querySelector('#theme i');
 
+class Book {
+    constructor(title, author, pages, status, coverColor, textColor) {
+        this.title = title;
+        this.author = author;
+        this.title = title;
+        this.author = author;
+        this.status = status;
+        this.pages = pages;
+        this.coverColor = coverColor;
+        this.textColor = textColor;
+    }
+
+    changeStatus() {
+        if (this.status === 'Not read') {
+            this.status = 'Reading';
+        } else if (this.status === 'Reading') {
+            this.status = 'Finished';
+        } else {
+            this.status = 'Not read';
+        }
+    }
+}
+
 function Book(title, author, pages, status, coverColor, textColor) {
     this.title = title;
     this.author = author;
