@@ -1,12 +1,11 @@
 const libraryEl = document.querySelector('#library-container');
-const bookForm = document.querySelector('#book-form');
+const form = document.querySelector('#book-form');
 const addBookBtn = document.querySelector('#add-book-btn');
-const submitFormBtn = document.querySelector('#form-submit-btn');
 const removeFormBtn = document.querySelector('#book-form > i');
-
 const root = document.querySelector(':root');
 const theme = document.querySelector(`input[type='checkbox']`);
 const themeBtn = document.querySelector('#theme i');
+const myLibrary = [];
 
 class Book {
     constructor(title, author, pages, status, coverColor, textColor) {
@@ -21,157 +20,165 @@ class Book {
     }
 
     changeStatus() {
-        this.status =
-            this.status === 'Not read'
-                ? 'Reading'
-                : this.status === 'Reading'
-                ? 'Finished'
-                : 'Not read';
+        switch (this.status) {
+            case 'Finished':
+                this.status = 'Not read';
+                break;
+            case 'Reading':
+                this.status = 'Finished';
+                break;
+            default:
+                this.status = 'Reading';
+        }
     }
-}
 
-let myLibrary = [
-    new Book('The Fellowship of the Ring', 'J.R.R. Tolkien', 423, 'Finished', 'brown', 'gold'),
-    new Book('The Two Towers', 'J.R.R. Tolkien', 352, 'Reading', 'darkolivegreen', 'gold'),
-    new Book('The Return of the King', 'J.R.R. Tolkien', 416, 'Not read', 'darkslateblue', 'gold')
-];
+    getStatusIcon() {
+        switch (this.status) {
+            case 'Finished':
+                return 'fa-solid fa-circle-check';
+            case 'Reading':
+                return 'fa-solid fa-spinner';
+            default:
+                return 'fa-solid fa-circle-exclamation';
+        }
+    }
 
-function appendElement(element, parent, className) {
-    element.className = className;
-    parent.appendChild(element);
-}
-
-function showBookStatus(status) {
-    return status === 'Not read'
-        ? 'fa-solid fa-circle-exclamation'
-        : status === 'Reading'
-        ? 'fa-solid fa-spinner'
-        : 'fa-solid fa-circle-check';
-}
-
-function toggleForm(visibility, blur, disabled) {
-    bookForm.style.display = visibility;
-
-    document
-        .querySelectorAll('body *:not(#book-form, #book-form *)')
-        .forEach((n) => (n.style.filter = blur));
-
-    document
-        .querySelectorAll('button:not(#form-submit-btn)')
-        .forEach((btn) => (btn.disabled = disabled));
-
-    bookForm.reset();
-}
-
-function addBookToLibrary(event) {
-    const title = document.querySelector('#new-title').value;
-    const author = document.querySelector('#new-author').value;
-    const pages = document.querySelector('#new-pages').value;
-    const status = document.querySelector('#new-status').value;
-
-    const coverColor = document.querySelector('#cover-color').value;
-    const textColor = document.querySelector('#text-color').value;
-
-    const newBook = new Book(title, author, pages, status, coverColor, textColor);
-
-    myLibrary.push(newBook);
-
-    toggleForm('none', 'blur(0px)', false);
-
-    displayBooks();
-
-    event.preventDefault();
-}
-
-function displayBooks() {
-    document.querySelectorAll('#library-container *').forEach((book) => book.remove());
-
-    for (let i in myLibrary) {
+    displayInLibrary() {
         const bookContainer = document.createElement('div');
         const bookCover = document.createElement('div');
         const bookInfo = document.createElement('div');
         const deleteBookBtn = document.createElement('button');
-        const statusIcon = document.createElement('i');
+        const deleteBookIcon = document.createElement('i');
+        const bookStatus = document.createElement('button');
+        const bookStatusIcon = document.createElement('i');
+        const bookPages = document.createElement('p');
+        const bookTitle = document.createElement('p');
+        const bookAuthor = document.createElement('p');
 
-        appendElement(bookContainer, libraryEl, 'book-container');
-        appendElement(bookCover, bookContainer, 'book-cover');
-        appendElement(bookInfo, bookContainer, 'book-info');
+        bookContainer.className = 'book-container';
+        bookCover.className = 'book-cover';
+        bookInfo.className = 'book-info';
+        deleteBookBtn.className = 'delete-btn';
+        deleteBookIcon.className = 'fa-solid fa-trash';
+        bookStatus.className = 'status';
+        bookStatusIcon.className = this.getStatusIcon();
+        bookPages.className = 'pages';
+        bookTitle.className = 'title';
+        bookAuthor.className = 'author';
 
-        appendElement(deleteBookBtn, bookInfo, 'delete-btn');
-        appendElement(document.createElement('i'), deleteBookBtn, 'fa-solid fa-trash');
+        libraryEl.append(bookContainer);
+        bookContainer.append(bookCover);
+        bookContainer.append(bookInfo);
+        bookInfo.append(deleteBookBtn);
+        deleteBookBtn.append(deleteBookIcon);
+        bookInfo.append(bookStatus);
+        bookStatus.append(bookStatusIcon);
+        bookInfo.append(bookPages);
+        bookCover.append(bookTitle);
+        bookCover.append(bookAuthor);
 
-        bookContainer.dataset.index = i;
-        bookContainer.dataset.title = myLibrary[i].title;
+        bookContainer.dataset.index = myLibrary.indexOf(this);
+        bookContainer.dataset.title = this.title;
 
-        statusIcon.className = showBookStatus(myLibrary[i].status);
-
-        for (let prop in myLibrary[i]) {
-            const cover = document.querySelector(`[data-index='${i}'] .book-cover`);
-            const info = document.createElement('p');
-
-            info.textContent = myLibrary[i][prop];
-
-            if (prop === 'status') {
-                const statusBtn = document.createElement('button');
-
-                statusBtn.className = prop;
-                statusBtn.textContent = myLibrary[i][prop];
-
-                bookInfo.appendChild(statusBtn);
-                statusBtn.appendChild(statusIcon);
-            } else if (prop === 'coverColor') {
-                cover.style.background = myLibrary[i][prop];
-            } else if (prop === 'textColor') {
-                cover.style.color = myLibrary[i][prop];
-            } else if (prop === 'pages') {
-                appendElement(info, bookInfo, prop);
-            } else {
-                appendElement(info, bookCover, prop);
-            }
-        }
-
-        function removeBook() {
-            this.closest('.book-container').remove();
-
-            myLibrary.splice(i, 1);
-
-            document.querySelectorAll('.book-container').forEach((n) => {
-                for (i in myLibrary) {
-                    if (myLibrary[i].title === n.dataset.title) n.dataset.index = i;
-                }
-            });
-        }
-
-        function displayNewStatus() {
-            myLibrary[i].changeStatus();
-            this.textContent = myLibrary[i].status;
-            appendElement(document.createElement('i'), this, showBookStatus(myLibrary[i].status));
-        }
-
-        document
-            .querySelectorAll('.delete-btn')
-            .forEach((btn) => btn.addEventListener('click', removeBook));
-
-        document
-            .querySelector(`[data-index='${i}'] .status`)
-            .addEventListener('click', displayNewStatus);
+        bookStatus.append(this.status);
+        bookCover.style.background = this.coverColor;
+        bookCover.style.color = this.textColor;
+        bookPages.textContent = this.pages;
+        bookTitle.textContent = this.title;
+        bookAuthor.textContent = this.author;
     }
 }
 
-displayBooks();
+myLibrary.push(
+    new Book(
+        'The Fellowship of the Ring',
+        'J.R.R. Tolkien',
+        423,
+        'Finished',
+        'brown',
+        'gold'
+    ),
+    new Book(
+        'The Two Towers',
+        'J.R.R. Tolkien',
+        352,
+        'Reading',
+        'darkolivegreen',
+        'gold'
+    ),
+    new Book(
+        'The Return of the King',
+        'J.R.R. Tolkien',
+        416,
+        'Not read',
+        'darkslateblue',
+        'gold'
+    )
+);
+
+myLibrary.forEach((book) => {
+    book.displayInLibrary();
+});
+
+function toggleForm(visibility, blur, disabled) {
+    form.style.display = visibility;
+
+    document.querySelectorAll('body > *:not(#book-form)').forEach((el) => {
+        el.style.filter = blur;
+    });
+
+    document.querySelectorAll('button:not(#submit-book-btn)').forEach((btn) => {
+        btn.disabled = disabled;
+    });
+
+    form.reset();
+}
+
+function addBookToLibrary(e) {
+    const title = document.querySelector('#new-title').value;
+    const author = document.querySelector('#new-author').value;
+    const pages = document.querySelector('#new-pages').value;
+    const status = document.querySelector('#new-status').value;
+    const coverColor = document.querySelector('#cover-color').value;
+    const textColor = document.querySelector('#text-color').value;
+    const newBook = new Book(
+        title,
+        author,
+        pages,
+        status,
+        coverColor,
+        textColor
+    );
+
+    myLibrary.push(newBook);
+    newBook.displayInLibrary();
+    e.preventDefault();
+    toggleForm('none', 'blur(0px)', false);
+}
+
 root.className = 'dark';
 
-addBookBtn.addEventListener('click', () => toggleForm('block', 'blur(2px)', true));
-removeFormBtn.addEventListener('click', () => toggleForm('none', 'blur(0px)', false));
-bookForm.addEventListener('submit', addBookToLibrary);
+addBookBtn.addEventListener('click', () => {
+    toggleForm('block', 'blur(2px)', true);
+});
 
-theme.addEventListener('change', () => (root.className = theme.checked ? 'dark' : 'light'));
+removeFormBtn.addEventListener('click', () => {
+    toggleForm('none', 'blur(0px)', false);
+});
+
+form.addEventListener('submit', addBookToLibrary);
+
+theme.addEventListener('change', () => {
+    root.className = theme.checked ? 'dark' : 'light';
+});
 
 themeBtn.addEventListener('click', function () {
     this.id = 'clicked';
     setTimeout(() => {
         this.className =
-            this.className === 'fa-solid fa-moon' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            this.className === 'fa-solid fa-moon'
+                ? 'fa-solid fa-sun'
+                : 'fa-solid fa-moon';
     }, 200);
 });
 
