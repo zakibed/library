@@ -1,10 +1,10 @@
-const libraryEl = document.querySelector('#library-container');
-const form = document.querySelector('#book-form');
-const addBookBtn = document.querySelector('#add-book-btn');
+const libraryElement = document.querySelector('#library-container');
+const bookForm = document.querySelector('#book-form');
+const newBookBtn = document.querySelector('#new-book-btn');
 const removeFormBtn = document.querySelector('#book-form > i');
 const root = document.querySelector(':root');
-const theme = document.querySelector(`input[type='checkbox']`);
-const themeBtn = document.querySelector('#theme i');
+const themeToggle = document.querySelector('#theme-toggle');
+const themeIcon = document.querySelector('#theme i');
 const myLibrary = [];
 
 class Book {
@@ -19,19 +19,6 @@ class Book {
         this.textColor = textColor;
     }
 
-    changeStatus() {
-        switch (this.status) {
-            case 'Finished':
-                this.status = 'Not read';
-                break;
-            case 'Reading':
-                this.status = 'Finished';
-                break;
-            default:
-                this.status = 'Reading';
-        }
-    }
-
     getStatusIcon() {
         switch (this.status) {
             case 'Finished':
@@ -43,50 +30,120 @@ class Book {
         }
     }
 
-    displayInLibrary() {
-        const bookContainer = document.createElement('div');
-        const bookCover = document.createElement('div');
-        const bookInfo = document.createElement('div');
-        const deleteBookBtn = document.createElement('button');
-        const deleteBookIcon = document.createElement('i');
-        const bookStatus = document.createElement('button');
-        const bookStatusIcon = document.createElement('i');
-        const bookPages = document.createElement('p');
-        const bookTitle = document.createElement('p');
-        const bookAuthor = document.createElement('p');
+    changeStatus(statusElement, statusIcon) {
+        switch (this.status) {
+            case 'Finished':
+                this.status = 'Not read';
+                break;
+            case 'Reading':
+                this.status = 'Finished';
+                break;
+            default:
+                this.status = 'Reading';
+        }
 
-        bookContainer.className = 'book-container';
-        bookCover.className = 'book-cover';
-        bookInfo.className = 'book-info';
-        deleteBookBtn.className = 'delete-btn';
-        deleteBookIcon.className = 'fa-solid fa-trash';
-        bookStatus.className = 'status';
-        bookStatusIcon.className = this.getStatusIcon();
-        bookPages.className = 'pages';
-        bookTitle.className = 'title';
-        bookAuthor.className = 'author';
-
-        libraryEl.append(bookContainer);
-        bookContainer.append(bookCover);
-        bookContainer.append(bookInfo);
-        bookInfo.append(deleteBookBtn);
-        deleteBookBtn.append(deleteBookIcon);
-        bookInfo.append(bookStatus);
-        bookStatus.append(bookStatusIcon);
-        bookInfo.append(bookPages);
-        bookCover.append(bookTitle);
-        bookCover.append(bookAuthor);
-
-        bookContainer.dataset.index = myLibrary.indexOf(this);
-        bookContainer.dataset.title = this.title;
-
-        bookStatus.append(this.status);
-        bookCover.style.background = this.coverColor;
-        bookCover.style.color = this.textColor;
-        bookPages.textContent = this.pages;
-        bookTitle.textContent = this.title;
-        bookAuthor.textContent = this.author;
+        statusElement.removeChild(statusElement.lastChild);
+        statusElement.append(this.status);
+        statusIcon.className = this.getStatusIcon();
     }
+
+    displayInLibrary() {
+        const container = document.createElement('div');
+        const cover = document.createElement('div');
+        const info = document.createElement('div');
+        const titleElement = document.createElement('p');
+        const authorElement = document.createElement('p');
+        const pagesElement = document.createElement('p');
+        const deleteBtn = document.createElement('button');
+        const deleteBtnIcon = document.createElement('i');
+        const statusElement = document.createElement('button');
+        const statusIcon = document.createElement('i');
+
+        container.className = 'book-container';
+        cover.className = 'book-cover';
+        info.className = 'book-info';
+        titleElement.className = 'title';
+        authorElement.className = 'author';
+        pagesElement.className = 'pages';
+        deleteBtn.className = 'delete-btn';
+        deleteBtnIcon.className = 'fa-solid fa-trash';
+        statusElement.className = 'status';
+        statusIcon.className = this.getStatusIcon();
+
+        libraryElement.append(container);
+        container.append(cover, info);
+        cover.append(titleElement, authorElement);
+        info.append(deleteBtn, statusElement, pagesElement);
+        deleteBtn.append(deleteBtnIcon);
+        statusElement.append(statusIcon);
+
+        container.dataset.title = this.title;
+
+        statusElement.append(this.status);
+        cover.style.background = this.coverColor;
+        cover.style.color = this.textColor;
+        pagesElement.textContent = this.pages;
+        titleElement.textContent = this.title;
+        authorElement.textContent = this.author;
+
+        deleteBtn.addEventListener('click', () =>
+            document.querySelector(`[data-title="${this.title}"]`).remove()
+        );
+
+        statusElement.addEventListener('click', () =>
+            this.changeStatus(statusElement, statusIcon)
+        );
+    }
+}
+
+function toggleForm(visibility, isDisabled) {
+    bookForm.reset();
+    bookForm.style.display = visibility;
+
+    document.querySelectorAll('body > *:not(#book-form)').forEach((el) => {
+        el.classList.toggle('disabled');
+    });
+
+    document.querySelectorAll('button:not(#submit-book-btn)').forEach((btn) => {
+        btn.disabled = isDisabled;
+    });
+}
+
+function toggleTheme() {
+    root.className = themeToggle.checked ? 'dark' : 'light';
+    themeIcon.id = 'theme-active';
+
+    themeIcon.addEventListener('transitionend', () => {
+        themeIcon.removeAttribute('id');
+    });
+
+    setTimeout(() => {
+        themeIcon.className = themeToggle.checked
+            ? 'fa-solid fa-moon'
+            : 'fa-solid fa-sun';
+    }, 200);
+}
+
+function addBookToLibrary(e) {
+    const title = document.querySelector('#new-title').value;
+    const author = document.querySelector('#new-author').value;
+    const pages = document.querySelector('#new-pages').value;
+    const status = document.querySelector('#new-status').value;
+    const coverColor = document.querySelector('#new-cover-color').value;
+    const textColor = document.querySelector('#new-text-color').value;
+    const newBook = new Book(
+        title,
+        author,
+        pages,
+        status,
+        coverColor,
+        textColor
+    );
+
+    myLibrary.push(newBook);
+    newBook.displayInLibrary();
+    e.preventDefault();
+    toggleForm('none', false);
 }
 
 myLibrary.push(
@@ -120,68 +177,9 @@ myLibrary.forEach((book) => {
     book.displayInLibrary();
 });
 
-function toggleForm(visibility, blur, disabled) {
-    form.style.display = visibility;
-
-    document.querySelectorAll('body > *:not(#book-form)').forEach((el) => {
-        el.style.filter = blur;
-    });
-
-    document.querySelectorAll('button:not(#submit-book-btn)').forEach((btn) => {
-        btn.disabled = disabled;
-    });
-
-    form.reset();
-}
-
-function addBookToLibrary(e) {
-    const title = document.querySelector('#new-title').value;
-    const author = document.querySelector('#new-author').value;
-    const pages = document.querySelector('#new-pages').value;
-    const status = document.querySelector('#new-status').value;
-    const coverColor = document.querySelector('#cover-color').value;
-    const textColor = document.querySelector('#text-color').value;
-    const newBook = new Book(
-        title,
-        author,
-        pages,
-        status,
-        coverColor,
-        textColor
-    );
-
-    myLibrary.push(newBook);
-    newBook.displayInLibrary();
-    e.preventDefault();
-    toggleForm('none', 'blur(0px)', false);
-}
-
 root.className = 'dark';
 
-addBookBtn.addEventListener('click', () => {
-    toggleForm('block', 'blur(2px)', true);
-});
-
-removeFormBtn.addEventListener('click', () => {
-    toggleForm('none', 'blur(0px)', false);
-});
-
-form.addEventListener('submit', addBookToLibrary);
-
-theme.addEventListener('change', () => {
-    root.className = theme.checked ? 'dark' : 'light';
-});
-
-themeBtn.addEventListener('click', function () {
-    this.id = 'clicked';
-    setTimeout(() => {
-        this.className =
-            this.className === 'fa-solid fa-moon'
-                ? 'fa-solid fa-sun'
-                : 'fa-solid fa-moon';
-    }, 200);
-});
-
-themeBtn.addEventListener('transitionend', function () {
-    this.removeAttribute('id');
-});
+newBookBtn.addEventListener('click', () => toggleForm('block', true));
+bookForm.addEventListener('submit', addBookToLibrary);
+removeFormBtn.addEventListener('click', () => toggleForm('none', false));
+themeToggle.addEventListener('change', toggleTheme);
