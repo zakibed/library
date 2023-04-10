@@ -1,6 +1,6 @@
 const libraryElement = document.querySelector('#library-container');
-const bookForm = document.querySelector('#book-form');
 const newBookBtn = document.querySelector('#new-book-btn');
+const bookForm = document.querySelector('#book-form');
 const removeFormBtn = document.querySelector('#book-form > i');
 const root = document.querySelector(':root');
 const themeToggle = document.querySelector('#theme-toggle');
@@ -13,8 +13,8 @@ class Book {
         this.author = author;
         this.title = title;
         this.author = author;
-        this.status = status;
         this.pages = pages;
+        this.status = status;
         this.coverColor = coverColor;
         this.textColor = textColor;
     }
@@ -33,7 +33,7 @@ class Book {
     changeStatus(statusElement, statusIcon) {
         switch (this.status) {
             case 'Finished':
-                this.status = 'Not read';
+                this.status = 'Not Read';
                 break;
             case 'Reading':
                 this.status = 'Finished';
@@ -80,6 +80,7 @@ class Book {
         container.dataset.title = this.title;
 
         statusElement.append(this.status);
+
         cover.style.background = this.coverColor;
         cover.style.color = this.textColor;
         pagesElement.textContent = this.pages;
@@ -113,9 +114,9 @@ function toggleTheme() {
     root.className = themeToggle.checked ? 'dark' : 'light';
     themeIcon.id = 'theme-active';
 
-    themeIcon.addEventListener('transitionend', () => {
-        themeIcon.removeAttribute('id');
-    });
+    themeIcon.addEventListener('transitionend', () =>
+        themeIcon.removeAttribute('id')
+    );
 
     setTimeout(() => {
         themeIcon.className = themeToggle.checked
@@ -167,15 +168,13 @@ myLibrary.push(
         'The Return of the King',
         'J.R.R. Tolkien',
         416,
-        'Not read',
+        'Not Read',
         'darkslateblue',
         'gold'
     )
 );
 
-myLibrary.forEach((book) => {
-    book.displayInLibrary();
-});
+myLibrary.forEach((book) => book.displayInLibrary());
 
 root.className = 'dark';
 
