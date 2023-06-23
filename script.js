@@ -174,7 +174,6 @@ function addBookToLibrary(e) {
     const book = new Book(title, author, pages, status, coverColor, textColor);
 
     book.addToLibrary();
-    Display.updateLibrary();
     Display.toggleModal(addBookModal, false);
 }
 
