@@ -1,16 +1,7 @@
-const libraryElement = document.querySelector('#library-container');
-const newBookBtn = document.querySelector('#new-book-btn');
-const bookForm = document.querySelector('#book-form');
-const removeFormBtn = document.querySelector('#book-form > i');
-const root = document.querySelector(':root');
-const themeToggle = document.querySelector('#theme-toggle');
-const themeIcon = document.querySelector('#theme i');
 const myLibrary = [];
 
 class Book {
     constructor(title, author, pages, status, coverColor, textColor) {
-        this.title = title;
-        this.author = author;
         this.title = title;
         this.author = author;
         this.pages = pages;
@@ -19,135 +10,132 @@ class Book {
         this.textColor = textColor;
     }
 
-    getStatusIcon() {
-        switch (this.status) {
-            case 'Finished':
-                return 'fa-solid fa-circle-check';
-            case 'Reading':
-                return 'fa-solid fa-spinner';
-            default:
-                return 'fa-solid fa-circle-exclamation';
-        }
+    addToLibrary() {
+        myLibrary.push(this);
+        Display.updateLibrary();
     }
 
-    changeStatus(statusElement, statusIcon) {
+    removeFromLibrary() {
+        myLibrary.splice(myLibrary.indexOf(this), 1);
+        Display.updateLibrary();
+    }
+
+    switchStatus() {
         switch (this.status) {
-            case 'Finished':
-                this.status = 'Not Read';
+            case 'Not Read':
+                this.status = 'Reading';
                 break;
             case 'Reading':
                 this.status = 'Finished';
                 break;
             default:
-                this.status = 'Reading';
+                this.status = 'Not Read';
+                break;
         }
 
-        statusElement.removeChild(statusElement.lastChild);
-        statusElement.append(this.status);
-        statusIcon.className = this.getStatusIcon();
+        Display.updateLibrary();
     }
+}
 
-    displayInLibrary() {
-        const container = document.createElement('div');
+class Display {
+    static createBook(book) {
+        const element = document.createElement('div');
+        element.dataset.index = myLibrary.indexOf(book);
+        element.classList.add('book');
+
         const cover = document.createElement('div');
+        cover.style.backgroundColor = book.coverColor;
+        cover.style.color = book.textColor;
+        cover.classList.add('book-cover');
+        element.appendChild(cover);
+
+        const title = document.createElement('p');
+        title.textContent = book.title;
+        title.classList.add('book-title');
+        cover.appendChild(title);
+
+        const author = document.createElement('p');
+        author.textContent = book.author;
+        author.classList.add('book-author');
+        cover.appendChild(author);
+
         const info = document.createElement('div');
-        const titleElement = document.createElement('p');
-        const authorElement = document.createElement('p');
-        const pagesElement = document.createElement('p');
-        const deleteBtn = document.createElement('button');
-        const deleteBtnIcon = document.createElement('i');
-        const statusElement = document.createElement('button');
-        const statusIcon = document.createElement('i');
-
-        container.className = 'book-container';
-        cover.className = 'book-cover';
         info.className = 'book-info';
-        titleElement.className = 'title';
-        authorElement.className = 'author';
-        pagesElement.className = 'pages';
-        deleteBtn.className = 'delete-btn';
-        deleteBtnIcon.className = 'fa-solid fa-trash';
-        statusElement.className = 'status';
-        statusIcon.className = this.getStatusIcon();
+        element.appendChild(info);
 
-        libraryElement.append(container);
-        container.append(cover, info);
-        cover.append(titleElement, authorElement);
-        info.append(deleteBtn, statusElement, pagesElement);
-        deleteBtn.append(deleteBtnIcon);
-        statusElement.append(statusIcon);
+        const statusBtn = document.createElement('button');
+        statusBtn.classList.add('btn-book-status');
+        info.appendChild(statusBtn);
 
-        container.dataset.title = this.title;
+        const statusIcon = document.createElement('i');
+        statusBtn.appendChild(statusIcon);
+        statusBtn.appendChild(document.createTextNode(book.status));
 
-        statusElement.append(this.status);
+        if (book.status === 'Finished') {
+            statusIcon.classList.add('fa-solid', 'fa-circle-check');
+        } else if (book.status === 'Reading') {
+            statusIcon.classList.add('fa-solid', 'fa-book-open-reader');
+        } else {
+            statusIcon.classList.add('fa-solid', 'fa-circle-exclamation');
+        }
 
-        cover.style.background = this.coverColor;
-        cover.style.color = this.textColor;
-        pagesElement.textContent = this.pages;
-        titleElement.textContent = this.title;
-        authorElement.textContent = this.author;
+        const pages = document.createElement('p');
+        pages.textContent = book.pages;
+        pages.classList.add('book-pages');
+        info.appendChild(pages);
 
-        deleteBtn.addEventListener('click', () =>
-            document.querySelector(`[data-title="${this.title}"]`).remove()
-        );
+        const deleteBookBtn = document.createElement('button');
+        deleteBookBtn.classList.add('btn-delete-book');
+        info.appendChild(deleteBookBtn);
 
-        statusElement.addEventListener('click', () =>
-            this.changeStatus(statusElement, statusIcon)
-        );
+        const deleteBookIcon = document.createElement('i');
+        deleteBookIcon.classList.add('fa-solid', 'fa-trash-can');
+        deleteBookBtn.appendChild(deleteBookIcon);
+
+        deleteBookBtn.addEventListener('click', () => book.removeFromLibrary());
+        statusBtn.addEventListener('click', () => book.switchStatus());
+
+        return element;
+    }
+
+    static updateLibrary() {
+        const library = document.querySelector('.library');
+
+        library.textContent = '';
+        myLibrary.forEach((book) => library.appendChild(this.createBook(book)));
+    }
+
+    static toggleModal(modal, toggle) {
+        modal.style.display = toggle ? 'flex' : 'none';
+
+        document
+            .querySelectorAll(`body > *:not(.${modal.classList[0]})`)
+            .forEach((el) => {
+                el.classList.toggle('blur');
+            });
+        document
+            .querySelectorAll(`button:not(.${modal.classList[0]} button)`)
+            .forEach((btn) => {
+                btn.disabled = toggle;
+            });
+
+        modal.reset();
+    }
+
+    static toggleTheme() {
+        const root = document.querySelector(':root');
+        const icon = document.querySelector('.theme i');
+
+        root.className = this.checked ? 'light' : '';
+        icon.className = this.checked ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
     }
 }
 
-function toggleForm(visibility, isDisabled) {
-    bookForm.reset();
-    bookForm.style.display = visibility;
-
-    document.querySelectorAll('body > *:not(#book-form)').forEach((el) => {
-        el.classList.toggle('disabled');
-    });
-
-    document.querySelectorAll('button:not(#submit-book-btn)').forEach((btn) => {
-        btn.disabled = isDisabled;
-    });
-}
-
-function toggleTheme() {
-    root.className = themeToggle.checked ? 'dark' : 'light';
-    themeIcon.id = 'theme-active';
-
-    themeIcon.addEventListener('transitionend', () =>
-        themeIcon.removeAttribute('id')
-    );
-
-    setTimeout(() => {
-        themeIcon.className = themeToggle.checked
-            ? 'fa-solid fa-moon'
-            : 'fa-solid fa-sun';
-    }, 200);
-}
-
-function addBookToLibrary(e) {
-    const title = document.querySelector('#new-title').value;
-    const author = document.querySelector('#new-author').value;
-    const pages = document.querySelector('#new-pages').value;
-    const status = document.querySelector('#new-status').value;
-    const coverColor = document.querySelector('#new-cover-color').value;
-    const textColor = document.querySelector('#new-text-color').value;
-    const newBook = new Book(
-        title,
-        author,
-        pages,
-        status,
-        coverColor,
-        textColor
-    );
-
-    myLibrary.push(newBook);
-    newBook.displayInLibrary();
-    e.preventDefault();
-    toggleForm('none', false);
-}
-
-myLibrary.push(
+const addBookBtn = document.querySelector('.btn-add-book');
+const addBookModal = document.querySelector('.modal-add-book');
+const removeModalBtn = document.querySelector('.btn-remove-modal');
+const themeToggle = document.querySelector('#theme-toggle');
+const sampleBooks = [
     new Book(
         'The Fellowship of the Ring',
         'J.R.R. Tolkien',
@@ -172,13 +160,31 @@ myLibrary.push(
         'darkslateblue',
         'gold'
     )
+];
+
+function addBookToLibrary(e) {
+    e.preventDefault();
+
+    const title = document.querySelector('#add-book-title').value;
+    const author = document.querySelector('#add-book-author').value;
+    const pages = document.querySelector('#add-book-pages').value;
+    const status = document.querySelector('#add-book-status').value;
+    const coverColor = document.querySelector('#add-book-cover-color').value;
+    const textColor = document.querySelector('#add-book-text-color').value;
+    const book = new Book(title, author, pages, status, coverColor, textColor);
+
+    book.addToLibrary();
+    Display.updateLibrary();
+    Display.toggleModal(addBookModal, false);
+}
+
+sampleBooks.forEach((book) => book.addToLibrary());
+
+addBookModal.addEventListener('submit', addBookToLibrary);
+addBookBtn.addEventListener('click', () =>
+    Display.toggleModal(addBookModal, true)
 );
-
-myLibrary.forEach((book) => book.displayInLibrary());
-
-root.className = 'dark';
-
-newBookBtn.addEventListener('click', () => toggleForm('block', true));
-bookForm.addEventListener('submit', addBookToLibrary);
-removeFormBtn.addEventListener('click', () => toggleForm('none', false));
-themeToggle.addEventListener('change', toggleTheme);
+removeModalBtn.addEventListener('click', () =>
+    Display.toggleModal(addBookModal, false)
+);
+themeToggle.addEventListener('change', Display.toggleTheme);
